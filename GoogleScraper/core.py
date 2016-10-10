@@ -216,7 +216,11 @@ def main(return_results=False, parse_cmd_line=True, config_from_dict=None):
     num_workers = int(config.get('num_workers'))
     scrape_method = config.get('scrape_method')
     pages = int(config.get('num_pages_for_keyword', 1))
-    method = config.get('scrape_method', 'http')
+    method = config.get('scrape_method', 'http')   
+	
+	## Geo-linguistic variations: geting the additional language and country parameters for Google
+    lr = config.get('lr')   #
+    cr = config.get('cr')	#
 
     if config.get('shell', False):
         namespace = {}

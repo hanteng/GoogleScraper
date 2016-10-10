@@ -23,7 +23,7 @@ headers = {
 
 
 def get_GET_params_for_search_engine(query, search_engine, page_number=1, num_results_per_page=10,
-                                     search_type='normal'):
+                                     search_type='normal', *args, **kwargs):
     """Returns the params of the url for the search engine and the search mode.
 
     Args:
@@ -39,10 +39,18 @@ def get_GET_params_for_search_engine(query, search_engine, page_number=1, num_re
 
     search_params = {}
 
+    cr = kwargs.get('cr', None)
+    lr = kwargs.get('lr', None)
+	
     if search_engine == 'google':
         # always use the english interface, such that we can detect
         # state by some hard coded needles.
         search_params['hl'] = 'en'
+
+        # geo-linguistic parameters
+        search_params['cr'] = cr
+        search_params['lr'] = lr
+
         search_params['q'] = query
         # only set when other num results than 10.
         if num_results_per_page != 10:
@@ -237,10 +245,14 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
 
     def build_search(self):
         """Build the headers and params for the search request for the search engine."""
-
+        ##Getting additional parameters for Google geo-linguistic variations
+		
+		
         self.search_params = get_GET_params_for_search_engine(self.query, self.search_engine_name,
                                                               self.page_number, self.num_results_per_page,
-                                                              self.search_type)
+                                                              self.search_type, lr = self.config['lr'], cr = self.config['cr'])
+
+
 
         self.parser = get_parser_by_search_engine(self.search_engine_name)
         self.parser = self.parser(config=self.config)
